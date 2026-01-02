@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  invoice-to-pdf-service:
+    build: .
+    ports:
+      - "8001:8000"
+    environment:
+      - INVOICE_SERVICE_URL=http://host.docker.internal:8000
+      - HTTP_TIMEOUT_SECONDS=5
+
+
