@@ -16,8 +16,9 @@ class InvoiceStatus(str, Enum):
 class InvoiceLineResponse(BaseModel):
     id: UUID
     invoice_id: UUID
+    product_id: UUID
+    amount: int
     description: str
-    quantity: int
     unit_price: Decimal
     line_total: Decimal
 
@@ -25,7 +26,10 @@ class InvoiceLineResponse(BaseModel):
 class InvoiceResponse(BaseModel):
     id: UUID
     invoice_number: str
-    customer_id: UUID
+    partner_id: UUID
+    company_id: UUID
+    user_id: UUID
+    comment: str | None = None
     issue_date: datetime
     due_date: datetime
     status: InvoiceStatus

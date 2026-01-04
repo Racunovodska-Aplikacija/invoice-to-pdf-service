@@ -30,7 +30,11 @@
       <div class="meta">
         <div>Datum izdaje: {{ invoice.issue_date.date() }}</div>
         <div>Datum zapadlosti: {{ invoice.due_date.date() }}</div>
-        <div>Stranka: {{ invoice.customer_id }}</div>
+        <div>Partner: {{ invoice.partner_id }}</div>
+        <div>Podjetje: {{ invoice.company_id }}</div>
+        {% if invoice.comment %}
+        <div>Komentar: {{ invoice.comment }}</div>
+        {% endif %}
       </div>
     </div>
 
@@ -47,7 +51,7 @@
         {% for line in invoice.lines %}
         <tr>
           <td>{{ line.description }}</td>
-          <td class="num">{{ line.quantity }}</td>
+          <td class="num">{{ line.amount }}</td>
           <td class="num">{{ line.unit_price }}</td>
           <td class="num">{{ line.line_total }}</td>
         </tr>
