@@ -55,8 +55,19 @@
       <tbody>
         {% for line in invoice.lines %}
         <tr>
-          <td>{{ line.description }}</td>
-          <td class="num">{{ line.amount }}</td>
+          <td>
+            {% if line.product %}
+              {{ line.product.name }}
+            {% else %}
+              {{ line.description }}
+            {% endif %}
+          </td>
+          <td class="num">
+            {{ line.amount }}
+            {% if line.product and line.product.measuringUnit %}
+              {{ line.product.measuringUnit }}
+            {% endif %}
+          </td>
           <td class="num">{{ line.unit_price }}</td>
           <td class="num">{{ line.line_total }}</td>
         </tr>
