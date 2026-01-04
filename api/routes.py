@@ -24,7 +24,7 @@ def get_invoice_pdf(invoice_id: UUID, service: InvoicePdfService = Depends(get_s
     # except Exception:
     #     raise HTTPException(status_code=500, detail="Failed to generate PDF")
     pdf_bytes, filename = service.generate_invoice_pdf(invoice_id)
-
+ 
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",

@@ -28,13 +28,13 @@ class InvoiceResponse(BaseModel):
     invoice_number: str
     partner_id: UUID
     company_id: UUID
+    partner_name: str
+    company_name: str
     user_id: UUID
     comment: str | None = None
     issue_date: datetime
     due_date: datetime
     status: InvoiceStatus
-    subtotal: Decimal
-    tax_total: Decimal
     total: Decimal
     created_at: datetime
     lines: List[InvoiceLineResponse]

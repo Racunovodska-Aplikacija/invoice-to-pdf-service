@@ -30,8 +30,8 @@
       <div class="meta">
         <div>Datum izdaje: {{ invoice.issue_date.date() }}</div>
         <div>Datum zapadlosti: {{ invoice.due_date.date() }}</div>
-        <div>Partner: {{ invoice.partner_id }}</div>
-        <div>Podjetje: {{ company.companyName }}</div>
+        <div>Partner: {{ invoice.partner_name }}</div>
+        <div>Podjetje: {{ invoice.company_name }}</div>
         <div>{{ company.street }}{% if company.streetAdditional %}, {{ company.streetAdditional }}{% endif %}</div>
         <div>{{ company.postalCode }} {{ company.city }}</div>
         {% if company.vatId %}
@@ -65,14 +65,6 @@
     </table>
 
     <table class="totals">
-      <tr>
-        <td class="label">Vmesni seštevek</td>
-        <td class="value">{{ invoice.subtotal }}</td>
-      </tr>
-      <tr>
-        <td class="label">Davek</td>
-        <td class="value">{{ invoice.tax_total }}</td>
-      </tr>
       <tr>
         <td class="label strong">Skupaj</td>
         <td class="value strong">{{ invoice.total }}</td>
