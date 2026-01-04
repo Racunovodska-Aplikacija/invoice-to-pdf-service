@@ -8,5 +8,7 @@ services:
     environment:
       - INVOICE_SERVICE_URL=http://host.docker.internal:8000
       - HTTP_TIMEOUT_SECONDS=5
+      - COMPANY_SERVICE_GRPC_TARGET=host.docker.internal:50051
+      - GRPC_TIMEOUT_SECONDS=5
 
 
