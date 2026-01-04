@@ -10,6 +10,7 @@ services:
       - HTTP_TIMEOUT_SECONDS=5
       - COMPANY_SERVICE_GRPC_TARGET=host.docker.internal:50051
       - PRODUCT_SERVICE_GRPC_TARGET=host.docker.internal:50052
+      - PARTNER_SERVICE_GRPC_TARGET=host.docker.internal:50053
       - GRPC_TIMEOUT_SECONDS=5
 
 

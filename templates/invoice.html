@@ -26,11 +26,27 @@
         <div class="title">Račun</div>
         <div>#{{ invoice.invoice_number }}</div>
         <div>Status: {{ invoice.status }}</div>
+        <div style="margin-top: 8px;">
+          <div class="strong">Partner</div>
+          {% if invoice.partner %}
+            <div>{{ invoice.partner.naziv }}</div>
+            {% if invoice.partner.poljubenNaslov %}
+              <div>{{ invoice.partner.poljubenNaslov }}</div>
+            {% else %}
+              <div>{{ invoice.partner.ulica }}</div>
+              <div>{{ invoice.partner.postnaSt }} {{ invoice.partner.kraj }}</div>
+            {% endif %}
+            {% if invoice.partner.ddvZavezanec and invoice.partner.davcnaSt %}
+              <div>DDV ID: {{ invoice.partner.davcnaSt }}</div>
+            {% endif %}
+          {% else %}
+            <div>{{ invoice.partner_name }}</div>
+          {% endif %}
+        </div>
       </div>
       <div class="meta">
         <div>Datum izdaje: {{ invoice.issue_date.date() }}</div>
         <div>Datum zapadlosti: {{ invoice.due_date.date() }}</div>
-        <div>Partner: {{ invoice.partner_name }}</div>
         <div>Podjetje: {{ invoice.company_name }}</div>
         <div>{{ company.street }}{% if company.streetAdditional %}, {{ company.streetAdditional }}{% endif %}</div>
         <div>{{ company.postalCode }} {{ company.city }}</div>

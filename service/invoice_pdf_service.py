@@ -7,6 +7,7 @@ from weasyprint import HTML
 from client.company_client import CompanyClient
 from client.invoice_client import InvoiceClient
 from client.product_client import ProductClient, ProductClientNotFound
+from client.partner_client import PartnerClient, PartnerClientNotFound
 
 
 class InvoicePdfService:
@@ -14,6 +15,7 @@ class InvoicePdfService:
         self.invoice_client = InvoiceClient()
         self.company_client = CompanyClient()
         self.product_client = ProductClient()
+        self.partner_client = PartnerClient()
 
         templates_dir = Path(__file__).resolve().parent.parent / "templates"
         self.jinja = Environment(
@@ -34,6 +36,13 @@ class InvoicePdfService:
             except ProductClientNotFound:
                 product = None
             line_ctx["product"] = product
+
+        # Fetch partner data (available in template as invoice.partner.*)
+        try:
+            partner = self.partner_client.get_partner(str(invoice.partner_id))
+        except PartnerClientNotFound:
+            partner = None
+        invoice_ctx["partner"] = partner
 
         template = self.jinja.get_template("invoice.html")
         html = template.render(invoice=invoice_ctx, company=company)
