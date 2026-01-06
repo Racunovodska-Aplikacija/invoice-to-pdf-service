@@ -1,103 +1,234 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="sl">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Račun {{ invoice.invoice_number }}</title>
+
     <style>
-      body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 12px; color: #111; }
-      .header { display: flex; justify-content: space-between; margin-bottom: 16px; }
-      .title { font-size: 20px; font-weight: 700; }
-      .meta { text-align: right; }
-      .meta div { margin-bottom: 2px; }
-      table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-      th, td { padding: 8px; border-bottom: 1px solid #ddd; }
-      th { text-align: left; background: #f5f5f5; }
-      td.num, th.num { text-align: right; }
-      .totals { margin-top: 12px; width: 40%; margin-left: auto; }
-      .totals td { border: none; padding: 4px 8px; }
-      .totals .label { text-align: left; }
-      .totals .value { text-align: right; }
-      .strong { font-weight: 700; }
+      @page {
+        size: A4;
+        margin: 16mm 16mm 16mm 16mm;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        font-size: 12.5px;
+        line-height: 1.35;
+        color: #000;
+      }
+
+      .top-section {
+        display: flex;
+        align-items: flex-start;
+      }
+
+      .left-section {
+        flex: 1;
+      }
+
+      .right-section {
+        padding-left: 5px;
+        margin-left: 12px;
+        border-left: 1px solid #999;
+      }
+
+      .invoice-title {
+        font-weight: 700;
+        margin-bottom: 1px;
+      }
+
+      .info-line {
+        margin-bottom: 1px;
+        white-space: nowrap;
+      }
+
+      .partner-section {
+        margin-top: 120px;
+        max-width: 300px;
+      }
+
+      .partner-name {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      .partner-tax-id {
+        margin-top: 50px;
+      }
+
+      .right-section-outer {
+        margin-right: 30px;
+      }
+
+      /* Items table */
+      table.invoice-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+      }
+      .invoice-table thead th {
+        text-align: right;
+        font-weight: 400; /* header not bold */
+        border-bottom: 1px solid #000;
+        padding: 3px 0;
+      }
+      .invoice-table tbody td {
+        padding: 2px 0;
+        border-bottom: 1px solid #ddd; /* horizontal lines only */
+      }
+      .invoice-table .align-right {
+        text-align: right;
+      }
+      .invoice-table .align-center {
+        text-align: center;
+      }
+      .invoice-table .align-left {
+        text-align: left;
+      }
+      .invoice-table td,
+      .invoice-table th {
+        line-height: 1.15;
+      }
+
+      /* Totals */
+      .totals {
+        margin-top: 6px;
+        width: 240px;
+        margin-left: auto;
+        margin-right: 0;
+        text-align: right;
+      }
+      .total-line {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 2px 0;
+      }
+      .total-line .label {
+        margin-right: 8px;
+        text-align: right;
+      }
+      .total-line .value {
+        margin-left: 8px;
+        text-align: right;
+      }
+      .total-line.emphasis {
+        font-weight: 700;
+        border-top: 1px solid #000;
+        padding-top: 4px;
+      }
     </style>
   </head>
+
   <body>
-    <div class="header">
-      <div>
-        <div class="title">Račun</div>
-        <div>#{{ invoice.invoice_number }}</div>
-        <div>Status: {{ invoice.status }}</div>
-        <div style="margin-top: 8px;">
-          <div class="strong">Partner</div>
+    <div class="top-section">
+      <!-- LEFT -->
+      <div class="left-section">
+        <div class="invoice-title">Račun št.: {{ invoice.invoice_number }}</div>
+
+        <div class="info-line">
+          Datum izdaje: Ljubljana, {{ invoice.issue_date.strftime('%d.%m.%Y') if invoice.issue_date else 'N/A' }}
+        </div>
+
+        <div class="info-line">
+          Datum opr. storitve: {{ invoice.service_date.strftime('%d.%m.%Y') if invoice.service_date else 'N/A' }}
+        </div>
+
+        <div class="info-line">
+          Rok plačila: {{ invoice.due_date.strftime('%d.%m.%Y') if invoice.due_date else 'N/A' }}
+        </div>
+
+        <!-- Partner Section -->
+        <div class="partner-section">
           {% if invoice.partner %}
-            <div>{{ invoice.partner.naziv }}</div>
-            {% if invoice.partner.poljubenNaslov %}
-              <div>{{ invoice.partner.poljubenNaslov }}</div>
-            {% else %}
-              <div>{{ invoice.partner.ulica }}</div>
-              <div>{{ invoice.partner.postnaSt }} {{ invoice.partner.kraj }}</div>
-            {% endif %}
-            {% if invoice.partner.ddvZavezanec and invoice.partner.davcnaSt %}
-              <div>DDV ID: {{ invoice.partner.davcnaSt }}</div>
-            {% endif %}
-          {% else %}
-            <div>{{ invoice.partner_name }}</div>
-          {% endif %}
+          <div class="partner-name">{{ invoice.partner.naziv }}</div>
+          {% if invoice.partner.ulica %}
+          <div class="info-line">{{ invoice.partner.ulica }}</div>
+          {% endif %} {% if invoice.partner.postnaSt or invoice.partner.kraj %}
+          <div class="info-line">{{ invoice.partner.postnaSt }} {{ invoice.partner.kraj }}</div>
+          {% endif %} {% if invoice.partner.davcnaSt %}
+          <div class="info-line partner-tax-id">ID za DDV kupca: {{ invoice.partner.davcnaSt }}</div>
+          {% endif %} {% endif %}
         </div>
       </div>
-      <div class="meta">
-        <div>Datum izdaje: {{ invoice.issue_date.date() }}</div>
-        <div>Datum zapadlosti: {{ invoice.due_date.date() }}</div>
-        <div>Podjetje: {{ invoice.company_name }}</div>
-        <div>{{ company.street }}{% if company.streetAdditional %}, {{ company.streetAdditional }}{% endif %}</div>
-        <div>{{ company.postalCode }} {{ company.city }}</div>
-        {% if company.vatId %}
-        <div>DDV ID: {{ company.vatId }}</div>
-        {% endif %}
-        {% if invoice.comment %}
-        <div>Komentar: {{ invoice.comment }}</div>
-        {% endif %}
+
+      <!-- RIGHT -->
+      <div class="right-section-outer">
+        <div class="right-section">
+          {% if company %}
+          <div class="info-line"><strong>{{ company.companyName }}</strong></div>
+
+          {% if company.street %}
+          <div class="info-line">{{ company.street }}</div>
+          {% endif %} {% if company.postalCode or company.city %}
+          <div class="info-line">{{ company.postalCode }} {{ company.city }}</div>
+          {% endif %} {% if company.vatId %}
+          <div class="info-line">ID za DDV: {{ company.vatId }}</div>
+          {% endif %} {% if company.iban %}
+          <div class="info-line">IBAN št.: {{ company.iban }}</div>
+          {% endif %} {% if company.registrationNumber %}
+          <div class="info-line">Matična št.: {{ company.registrationNumber }}</div>
+          {% endif %} {% endif %}
+        </div>
       </div>
     </div>
 
-    <table>
+    {# Currency format helper: 1234.50 -> 1.234,50 € #} {% macro eur(v) -%} {%- set s = '{:,.2f}'.format((v or 0)|float)
+    -%} {{ s.replace(',', 'X').replace('.', ',').replace('X', '.') }} € {%- endmacro %} {% set totals =
+    namespace(net=0.0, vat=0.0) %}
+
+    <table class="invoice-table">
       <thead>
         <tr>
-          <th>Opis</th>
-          <th class="num">Količina</th>
-          <th class="num">Cena na enoto</th>
-          <th class="num">Znesek postavke</th>
+          <th style="width: 56%" class="align-left">Opis</th>
+          <th style="width: 10%">Cena</th>
+          <th style="width: 10%">Količina</th>
+          <th style="width: 8%">Enota</th>
+          <th style="width: 6%">DDV</th>
+          <th style="width: 14%">Znesek</th>
         </tr>
       </thead>
       <tbody>
-        {% for line in invoice.lines %}
+        {% for line in invoice.lines %} {% set product = line.product or {} %} {% set unit_price = (product.cost if
+        product.cost is defined and product.cost is not none and product.cost != '' else (product.price if product.price
+        is defined and product.price is not none and product.price != '' else 0)) | float %} {% set qty = line.amount %}
+        {% set unit = (product.measuringUnit if product.measuringUnit is defined and product.measuringUnit else '') %}
+        {% set ddv_pct = (product.ddvPercentage if product.ddvPercentage is defined and product.ddvPercentage else 22) |
+        float %} {% set gross = unit_price * qty %} {% set net = gross %} {% set vat_amt = net * (ddv_pct / 100) %} {%
+        set totals.net = totals.net + net %} {% set totals.vat = totals.vat + vat_amt %}
+
         <tr>
-          <td>
-            {% if line.product %}
-              {{ line.product.name }}
-            {% else %}
-              {{ line.description }}
-            {% endif %}
-          </td>
-          <td class="num">
-            {{ line.amount }}
-            {% if line.product and line.product.measuringUnit %}
-              {{ line.product.measuringUnit }}
-            {% endif %}
-          </td>
-          <td class="num">{{ line.unit_price }}</td>
-          <td class="num">{{ line.line_total }}</td>
+          <td class="align-left">{{ product.name if product.name is defined and product.name else '—' }}</td>
+          <td class="align-right">{{ eur(unit_price) }}</td>
+          <td class="align-right">{{ qty }}</td>
+          <td class="align-right">{{ unit }}</td>
+          <td class="align-right">{{ '{:.0f}%'.format(ddv_pct) }}</td>
+          <td class="align-right">{{ eur(net) }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
 
-    <table class="totals">
-      <tr>
-        <td class="label strong">Skupaj</td>
-        <td class="value strong">{{ invoice.total }}</td>
-      </tr>
-    </table>
+    <div class="totals">
+      <div class="total-line">
+        <span class="label">Skupaj</span>
+        <span class="value">{{ eur(totals.net) }}</span>
+      </div>
+      <div class="total-line">
+        <span class="label">DDV</span>
+        <span class="value">{{ eur(totals.vat) }}</span>
+      </div>
+      <div class="total-line emphasis">
+        <span class="label">Za plačilo</span>
+        <span class="value">{{ eur(totals.net + totals.vat) }}</span>
+      </div>
+    </div>
   </body>
 </html>
-
-

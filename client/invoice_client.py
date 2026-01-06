@@ -22,10 +22,11 @@ class InvoiceClient:
         except ValueError:
             self.timeout_seconds = 5.0
 
-    def get_invoice(self, invoice_id: UUID) -> InvoiceResponse:
+    def get_invoice(self, invoice_id: UUID, token: str) -> InvoiceResponse:
         url = f"{self.base_url}/invoices/{invoice_id}"
+        headers = {"Authorization": f"Bearer {token}"}
         try:
-            resp = requests.get(url, timeout=self.timeout_seconds)
+            resp = requests.get(url, headers=headers, timeout=self.timeout_seconds)
         except requests.RequestException as e:
             raise InvoiceClientError(str(e)) from e
 

@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import List
+from typing import List, Optional, Dict, Any
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -18,25 +18,22 @@ class InvoiceLineResponse(BaseModel):
     invoice_id: UUID
     product_id: UUID
     amount: int
-    description: str
-    unit_price: Decimal
-    line_total: Decimal
+    product: Optional[Dict[str, Any]] = None  # gRPC product data
 
 
 class InvoiceResponse(BaseModel):
     id: UUID
-    invoice_number: str
-    partner_id: UUID
-    company_id: UUID
-    partner_name: str
-    company_name: str
     user_id: UUID
-    comment: str | None = None
+    company_id: UUID
+    partner_id: UUID
+    invoice_number: str
     issue_date: datetime
+    service_date: datetime
     due_date: datetime
+    notes: Optional[str] = None
     status: InvoiceStatus
-    total: Decimal
-    created_at: datetime
     lines: List[InvoiceLineResponse]
+    company: Optional[Dict[str, Any]] = None  # gRPC company data
+    partner: Optional[Dict[str, Any]] = None  # gRPC partner data
 
 

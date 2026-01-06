@@ -5,6 +5,7 @@ app = FastAPI(
     title="Invoice to PDF Service",
     description="Microservice for generating PDF invoices",
     version="1.0.0",
+    root_path="/invoice-pdf",
 )
 
 app.include_router(router)
